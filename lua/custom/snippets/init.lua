@@ -42,11 +42,18 @@ local function get_go_return_args()
   local result_types = {}
 
   if cnode ~= nil then
+    -- TODO: method_declaration, type: (qualified_type)
     local result = vim.treesitter.query.parse('go', [[
+    [
+      (method_declaration
+        result: (parameter_list
+          (parameter_declaration
+            type: (_)+ @method_types)))
       (function_declaration
         result: (parameter_list
           (parameter_declaration
-            type: (type_identifier)+ @foo)))
+            type: (_)+ @function_types)))
+    ]
     ]])
 
     local bufnr = vim.api.nvim_get_current_buf()

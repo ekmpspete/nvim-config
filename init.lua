@@ -1,6 +1,7 @@
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
+vim.keymap.set("n", "<space>", "<nop>")
 vim.g.mapleader = ','
 vim.g.maplocalleader = ','
 
@@ -47,7 +48,7 @@ require('lazy').setup({
 
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', opts = { text = { spinner = 'arc' } } },
+      { 'j-hui/fidget.nvim', opts = { progress = { display = { progress_icon = 'arc' } } } },
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
@@ -106,9 +107,10 @@ require('lazy').setup({
     'lukas-reineke/indent-blankline.nvim',
     -- Enable `lukas-reineke/indent-blankline.nvim`
     -- See `:help indent_blankline.txt`
+    main = 'ibl',
     opts = {
-      char = '┊',
-      show_trailing_blankline_indent = false,
+      indent = { char = '┊' },
+      -- show_trailing_blankline_indent = false,
     },
   },
 
@@ -165,6 +167,7 @@ require('lazy').setup({
     "folke/todo-comments.nvim",
     dependencies = { "folke/trouble.nvim" },
     opts = {
+      signs = false,
       keywords = {
         TODO = { alt = { "todo" } },
       },
@@ -311,7 +314,7 @@ vim.keymap.set('n', '<leader>D', require('telescope.builtin').diagnostics, { des
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
   --ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'help', 'vim' },
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vim', 'query' },
+  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vim', 'query', 'html', 'css' },
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = false,
@@ -421,7 +424,7 @@ local on_attach = function(_, bufnr)
   -- Format
   nmap('<leader>F', vim.lsp.buf.format, '[F]ormat')
   nmap('<leader>I', function()
-    for _, client in ipairs(vim.lsp.get_active_clients()) do
+    for _, client in ipairs(vim.lsp.get_clients()) do
       if client.name == 'gopls' then
       vim.lsp.buf.code_action{
         context = {
@@ -449,7 +452,7 @@ local servers = {
   gopls = {},
   -- pyright = {},
   rust_analyzer = {},
-  -- tsserver = {},
+  tsserver = {},
 
   lua_ls = {
     Lua = {
